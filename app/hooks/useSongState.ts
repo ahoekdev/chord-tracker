@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
-import { supabase } from "~/lib/supabase";
+import { supabase } from "../../supabase/supabase";
 import type { Section } from "~/types";
 import addEmptyMeasureGroup from "~/utils/addEmptyMeasureGroup";
 import addEmptySection from "~/utils/addEmptySection";
@@ -8,6 +8,7 @@ import addChordToLastMeasure from "~/utils/addChordToLastMeasure";
 import deleteLastChord from "~/utils/deleteLastChord";
 import { normalizeSongTitle } from "~/utils/songTitle";
 import updateSectionName from "~/utils/updateSectionName";
+import addEmptyMeasure from "~/utils/addEmptyMeasure";
 
 type SaveState = "idle" | "saving" | "saved" | "error";
 
@@ -24,6 +25,9 @@ function useSongState() {
 
   // Add empty measure group when enter is pressed
   useHotkeys("enter", () => setSections(addEmptyMeasureGroup));
+
+  // Add empty measure when space is pressed
+  useHotkeys("space", () => setSections(addEmptyMeasure));
 
   // Delete last chord when backspace is pressed
   useHotkeys("backspace", () => setSections(deleteLastChord));

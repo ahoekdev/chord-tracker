@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
-import { supabase } from "~/lib/supabase";
+import { supabase } from "../../supabase/supabase";
 import { displaySongTitle } from "~/utils/songTitle";
 
 type SongListItem = {
@@ -108,7 +108,10 @@ export default function Songs() {
           </Link>
         </div>
 
-        <Link className="text-sm font-medium text-stone-600 hover:text-stone-900" to="/">
+        <Link
+          className="text-sm font-medium text-stone-600 hover:text-stone-900"
+          to="/"
+        >
           Back to home
         </Link>
 

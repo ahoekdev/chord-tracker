@@ -7,7 +7,7 @@ interface MeasureGroupProps {
 
 export function MeasureGroup({ measures }: MeasureGroupProps) {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex gap-2 flex-wrap">
       {measures.map((measure) => (
         <Measure key={measure.id} chords={measure.chords} />
       ))}

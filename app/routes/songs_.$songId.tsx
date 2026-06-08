@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 import { Section } from "~/components/Section/Section";
-import { supabase } from "~/lib/supabase";
+import { supabase } from "../../supabase/supabase";
 import type { Section as SongSection } from "~/types";
 import { displaySongTitle } from "~/utils/songTitle";
 
