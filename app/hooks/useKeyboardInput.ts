@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
-import { getChordFromKey } from "~/utils/getChordFromKey";
+import { useCallback, useState } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
 
 interface Section {
   name: string;
@@ -9,7 +9,7 @@ interface Section {
 function useKeyboardInput() {
   const [sections, setSections] = useState<Section[]>([]);
 
-  const addNewSection = useCallback(
+  const handleNewSection = useCallback(
     (name: string, chords: string[]) =>
       setSections((prev) => prev.concat({ name, chords })),
     [setSections],
@@ -25,39 +25,18 @@ function useKeyboardInput() {
     [setSections],
   );
 
-  const handleNewSection = useCallback(
-    (chords: string[]) => addNewSection("New Section", chords),
-    [addNewSection],
-  );
+  useHotkeys(["a", "b", "c", "d", "e", "f", "g"], (e) => {
+    const lastSection = sections[sections.length - 1];
+    const chord = e.key.toUpperCase();
 
-  useEffect(() => {
-    const handleKeyDown = ({ key, code }: KeyboardEvent) => {
-      if (code === "Space") {
-        handleNewSection([]);
-        return;
-      }
+    if (!lastSection) {
+      handleNewSection("Section", [chord]);
+    } else {
+      handleAddChordToLastSection(chord);
+    }
+  });
 
-      const chord = getChordFromKey(key);
-
-      if (!chord) {
-        return;
-      }
-
-      const lastSection = sections[sections.length - 1];
-
-      if (!lastSection) {
-        handleNewSection([chord]);
-      } else {
-        handleAddChordToLastSection(chord);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [handleAddChordToLastSection, handleNewSection, sections]);
+  useHotkeys("space", () => handleNewSection("Section", []));
 
   return { sections };
 }
