@@ -1,27 +1,34 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { getChordFromKey } from "~/utils/getChordFromKey";
 
 interface Section {
   name: string;
   chords: string[];
 }
 
-const chords = new Set<string>(["A", "B", "C", "D", "E", "F", "G"]);
-
 function useKeyboardInput() {
   const [sections, setSections] = useState<Section[]>([]);
 
-  const addNewSection = (name: string, chords: string[]) =>
-    setSections((prev) => prev.concat({ name, chords }));
+  const addNewSection = useCallback(
+    (name: string, chords: string[]) =>
+      setSections((prev) => prev.concat({ name, chords })),
+    [setSections],
+  );
 
-  const handleAddChordToLastSection = (chord: string) =>
-    setSections((prev) =>
-      prev.map((s, i) =>
-        i === prev.length - 1 ? { ...s, chords: [...s.chords, chord] } : s,
+  const handleAddChordToLastSection = useCallback(
+    (chord: string) =>
+      setSections((prev) =>
+        prev.map((s, i) =>
+          i === prev.length - 1 ? { ...s, chords: [...s.chords, chord] } : s,
+        ),
       ),
-    );
+    [setSections],
+  );
 
-  const handleNewSection = (chords: string[]) =>
-    addNewSection("New Section", chords);
+  const handleNewSection = useCallback(
+    (chords: string[]) => addNewSection("New Section", chords),
+    [addNewSection],
+  );
 
   useEffect(() => {
     const handleKeyDown = ({ key, code }: KeyboardEvent) => {
@@ -50,17 +57,9 @@ function useKeyboardInput() {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [sections, handleNewSection, handleAddChordToLastSection]);
+  }, [handleAddChordToLastSection, handleNewSection, sections]);
 
-  return { input: sections, setInput: setSections };
-}
-
-function getChordFromKey(key: string): string | null {
-  if (chords.has(key.toUpperCase())) {
-    return key.toUpperCase();
-  }
-
-  return null;
+  return { sections };
 }
 
 export default useKeyboardInput;
