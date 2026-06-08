@@ -1,5 +1,5 @@
 import { produce } from "immer";
-import type { Section } from "~/types";
+import type { ChordQuality, Section } from "~/types";
 import {
   createChord,
   createMeasure,
@@ -7,14 +7,18 @@ import {
   createSection,
 } from "~/utils/factories";
 
-export default function addNewChord(sections: Section[], chord: string) {
+export default function addNewChord(
+  sections: Section[],
+  chord: string,
+  quality: ChordQuality,
+) {
   return produce(sections, (prev) => {
     const lastSection = prev[prev.length - 1];
 
     if (!lastSection) {
       prev.push(
         createSection("Section", [
-          createMeasureGroup([createMeasure([createChord(chord)])]),
+          createMeasureGroup([createMeasure([createChord(chord, quality)])]),
         ]),
       );
       return prev;
@@ -26,7 +30,7 @@ export default function addNewChord(sections: Section[], chord: string) {
 
     if (!lastMeasureGroup) {
       lastSection.measureGroups.push(
-        createMeasureGroup([createMeasure([createChord(chord)])]),
+        createMeasureGroup([createMeasure([createChord(chord, quality)])]),
       );
       return prev;
     }
@@ -35,11 +39,13 @@ export default function addNewChord(sections: Section[], chord: string) {
       lastMeasureGroup.measures[lastMeasureGroup.measures.length - 1];
 
     if (!lastMeasure) {
-      lastMeasureGroup.measures.push(createMeasure([createChord(chord)]));
+      lastMeasureGroup.measures.push(
+        createMeasure([createChord(chord, quality)]),
+      );
       return prev;
     }
 
-    lastMeasure.chords.push(createChord(chord));
+    lastMeasure.chords.push(createChord(chord, quality));
 
     return prev;
   });

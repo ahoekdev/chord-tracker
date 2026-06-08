@@ -1,11 +1,17 @@
-import type { Chord, Measure, MeasureGroup, Section } from "~/types";
+import type {
+  Chord,
+  ChordQuality,
+  Measure,
+  MeasureGroup,
+  Section,
+} from "~/types";
 
 function id() {
   return crypto.randomUUID();
 }
 
-export function createChord(value: string): Chord {
-  return { id: id(), value };
+export function createChord(value: string, quality: ChordQuality): Chord {
+  return { id: id(), value, quality };
 }
 
 export function createMeasure(chords: Chord[] = []): Measure {

@@ -11,6 +11,8 @@ import updateSectionName from "~/utils/updateSectionName";
 
 type SaveState = "idle" | "saving" | "saved" | "error";
 
+const chordNames = ["a", "b", "c", "d", "e", "f", "g"];
+
 function useSongState() {
   const [title, setTitle] = useState("");
   const [sections, setSections] = useState<Section[]>([]);
@@ -27,8 +29,14 @@ function useSongState() {
   useHotkeys("backspace", () => setSections(deleteLastChord));
 
   // Add new chord when a, b, c, d, e, f, or g is pressed
-  useHotkeys(["a", "b", "c", "d", "e", "f", "g"], (e) =>
-    setSections((prev) => addNewChord(prev, e.key.toUpperCase())),
+  useHotkeys(chordNames, (e) =>
+    setSections((prev) => addNewChord(prev, e.key.toUpperCase(), "major")),
+  );
+
+  useHotkeys(
+    chordNames.map((chord) => "shift+" + chord),
+    (e) =>
+      setSections((prev) => addNewChord(prev, e.key.toUpperCase(), "minor")),
   );
 
   async function saveSong() {
@@ -60,7 +68,10 @@ function useSongState() {
       return;
     }
 
-    const { error } = await supabase.from("songs").update(payload).eq("id", songId);
+    const { error } = await supabase
+      .from("songs")
+      .update(payload)
+      .eq("id", songId);
 
     if (error) {
       setSaveState("error");

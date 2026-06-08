@@ -1,6 +1,9 @@
+export type ChordQuality = "major" | "minor" | "diminished" | "augmented";
+
 export interface Chord {
   id: string;
   value: string;
+  quality: ChordQuality;
 }
 
 export interface Measure {

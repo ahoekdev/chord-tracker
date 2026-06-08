@@ -5,6 +5,8 @@ function ChordTracker() {
   const { title, setTitle, sections, renameSection, saveSong, saveState } =
     useSongState();
 
+  console.log(sections);
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-4 border-b border-stone-200 pb-6 sm:flex-row sm:items-start sm:justify-between">
@@ -26,14 +28,14 @@ function ChordTracker() {
               Save failed
             </span>
           )}
-        <button
-          className="rounded-xl bg-stone-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-stone-700 disabled:cursor-not-allowed disabled:opacity-50"
-          disabled={saveState === "saving"}
-          onClick={() => void saveSong()}
-          type="button"
-        >
-          {saveState === "saving" ? "Saving..." : "Save"}
-        </button>
+          <button
+            className="rounded-xl bg-stone-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-stone-700 disabled:cursor-not-allowed disabled:opacity-50"
+            disabled={saveState === "saving"}
+            onClick={() => void saveSong()}
+            type="button"
+          >
+            {saveState === "saving" ? "Saving..." : "Save"}
+          </button>
         </div>
       </div>
       <div className="flex flex-col gap-2">
