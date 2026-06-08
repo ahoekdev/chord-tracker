@@ -3,33 +3,41 @@ import type { Section } from "~/types";
 
 export default function deleteLastChord(sections: Section[]) {
   return produce(sections, (prev) => {
-    const lastSection = prev[prev.length - 1];
+    while (prev.length > 0) {
+      const lastSection = prev[prev.length - 1];
 
-    if (!lastSection) {
-      return prev;
-    }
+      while (lastSection.measureGroups.length > 0) {
+        const lastMeasureGroup =
+          lastSection.measureGroups[lastSection.measureGroups.length - 1];
 
-    const { measureGroups } = lastSection;
+        while (lastMeasureGroup.length > 0) {
+          const lastMeasure = lastMeasureGroup[lastMeasureGroup.length - 1];
 
-    const lastMeasureGroup = measureGroups[measureGroups.length - 1];
+          if (lastMeasure.length === 0) {
+            lastMeasureGroup.pop();
+            continue;
+          }
 
-    if (!lastMeasureGroup) {
-      return prev;
-    }
+          lastMeasure.pop();
 
-    const lastMeasure = measureGroups[measureGroups.length - 1];
+          if (lastMeasure.length === 0) {
+            lastMeasureGroup.pop();
+          }
 
-    if (!lastMeasure) {
-      return prev;
-    }
+          if (lastMeasureGroup.length === 0) {
+            lastSection.measureGroups.pop();
+          }
 
-    lastMeasure.pop();
+          if (lastSection.measureGroups.length === 0) {
+            prev.pop();
+          }
 
-    if (lastMeasure.length === 0) {
-      measureGroups.pop();
-    }
+          return prev;
+        }
 
-    if (measureGroups.length === 0) {
+        lastSection.measureGroups.pop();
+      }
+
       prev.pop();
     }
 
