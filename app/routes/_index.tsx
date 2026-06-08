@@ -1,4 +1,4 @@
-import Tracker from "~/components/tracker";
+import ChordTracker from "~/components/ChordTracker";
 
 export function meta() {
   return [
@@ -10,7 +10,7 @@ export function meta() {
 export default function Home() {
   return (
     <div className="flex flex-col items-center justify-center h-screen">
-      <Tracker />
+      <ChordTracker />
     </div>
   );
 }

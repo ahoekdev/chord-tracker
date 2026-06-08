@@ -7,9 +7,7 @@ import addNewChord from "~/utils/addNewChord";
 import deleteLastChord from "~/utils/deleteLastChord";
 import updateSectionName from "~/utils/updateSectionName";
 
-function useSongState(
-  firstSectionInputRef: React.RefObject<HTMLInputElement | null>,
-) {
+function useSongState() {
   const [sections, setSections] = useState<Section[]>([]);
 
   // Add empty section when space is pressed
@@ -25,11 +23,6 @@ function useSongState(
   useHotkeys(["a", "b", "c", "d", "e", "f", "g"], (e) =>
     setSections((prev) => addNewChord(prev, e.key.toUpperCase())),
   );
-
-  useHotkeys(["ctrl+s", "meta+s"], (event) => {
-    event.preventDefault();
-    firstSectionInputRef.current?.focus();
-  });
 
   return {
     sections,
