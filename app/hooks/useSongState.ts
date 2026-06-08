@@ -5,8 +5,11 @@ import addEmptyMeasureGroup from "~/utils/addEmptyMeasureGroup";
 import addEmptySection from "~/utils/addEmptySection";
 import addNewChord from "~/utils/addNewChord";
 import deleteLastChord from "~/utils/deleteLastChord";
+import updateSectionName from "~/utils/updateSectionName";
 
-function useKeyboardInput() {
+function useSongState(
+  firstSectionInputRef: React.RefObject<HTMLInputElement | null>,
+) {
   const [sections, setSections] = useState<Section[]>([]);
 
   // Add empty section when space is pressed
@@ -23,7 +26,16 @@ function useKeyboardInput() {
     setSections((prev) => addNewChord(prev, e.key.toUpperCase())),
   );
 
-  return sections;
+  useHotkeys(["ctrl+s", "meta+s"], (event) => {
+    event.preventDefault();
+    firstSectionInputRef.current?.focus();
+  });
+
+  return {
+    sections,
+    renameSection: (sectionId: string, name: string) =>
+      setSections((prev) => updateSectionName(prev, sectionId, name)),
+  };
 }
 
-export default useKeyboardInput;
+export default useSongState;

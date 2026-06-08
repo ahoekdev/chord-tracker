@@ -1,14 +1,20 @@
-import useKeyboardInput from "~/hooks/useKeyboardInput";
+import { useRef } from "react";
+import useSongState from "~/hooks/useSongState";
+import { SectionInput } from "./SectionInput";
 
 function Tracker() {
-  const sections = useKeyboardInput();
+  const firstSectionInputRef = useRef<HTMLInputElement | null>(null);
+  const { sections, renameSection } = useSongState(firstSectionInputRef);
 
   return (
     <div>
       <h1>Chord Tracker</h1>
       {sections.map((section) => (
         <div key={section.id}>
-          <h2 className="text-sm font-light text-gray-300">{section.name}</h2>
+          <SectionInput
+            value={section.name}
+            onChange={(name) => renameSection(section.id, name)}
+          />
           <div className="flex flex-col gap-1">
             {section.measureGroups.map((measureGroup) => (
               <div key={measureGroup.id}>
