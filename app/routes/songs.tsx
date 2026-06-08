@@ -40,6 +40,7 @@ export default function Songs() {
   const [status, setStatus] = useState<"loading" | "ready" | "error">(
     "loading",
   );
+  const [deletingSongId, setDeletingSongId] = useState<string | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -69,6 +70,23 @@ export default function Songs() {
       isMounted = false;
     };
   }, []);
+
+  async function deleteSong(songId: string) {
+    setDeletingSongId(songId);
+
+    const { error } = await supabase.from("songs").delete().eq("id", songId);
+
+    if (error) {
+      setDeletingSongId(null);
+      setStatus("error");
+      return;
+    }
+
+    setSongs((currentSongs) =>
+      currentSongs.filter((song) => song.id !== songId),
+    );
+    setDeletingSongId(null);
+  }
 
   return (
     <main className="min-h-screen bg-stone-50 px-6 py-10">
@@ -117,10 +135,10 @@ export default function Songs() {
             {songs.map((song) => (
               <li
                 key={song.id}
-                className="border-b border-stone-200 last:border-b-0"
+                className="flex items-center justify-between gap-4 border-b border-stone-200 px-6 py-4 last:border-b-0"
               >
                 <Link
-                  className="block px-6 py-4 transition hover:bg-stone-50"
+                  className="min-w-0 flex-1 transition hover:text-stone-700"
                   to={`/songs/${song.id}`}
                 >
                   <div className="text-base font-medium text-stone-900">
@@ -130,6 +148,14 @@ export default function Songs() {
                     Created {formatCreatedAt(song.created_at)}
                   </div>
                 </Link>
+                <button
+                  className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700 transition hover:border-red-300 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
+                  disabled={deletingSongId === song.id}
+                  onClick={() => void deleteSong(song.id)}
+                  type="button"
+                >
+                  {deletingSongId === song.id ? "Deleting..." : "Delete"}
+                </button>
               </li>
             ))}
           </ul>

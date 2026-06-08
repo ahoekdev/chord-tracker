@@ -7,5 +7,5 @@ create table if not exists public.songs (
 
 alter table public.songs disable row level security;
 
-grant select, insert, update on table public.songs to anon;
-grant select, insert, update on table public.songs to authenticated;
+grant select, insert, update, delete on table public.songs to anon;
+grant select, insert, update, delete on table public.songs to authenticated;
