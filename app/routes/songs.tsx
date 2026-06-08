@@ -115,14 +115,19 @@ export default function Songs() {
             {songs.map((song) => (
               <li
                 key={song.id}
-                className="border-b border-stone-200 px-6 py-4 last:border-b-0"
+                className="border-b border-stone-200 last:border-b-0"
               >
-                <div className="text-base font-medium text-stone-900">
-                  Song {song.id.slice(0, 8)}
-                </div>
-                <div className="mt-1 text-sm text-stone-500">
-                  Created {formatCreatedAt(song.created_at)}
-                </div>
+                <Link
+                  className="block px-6 py-4 transition hover:bg-stone-50"
+                  to={`/songs/${song.id}`}
+                >
+                  <div className="text-base font-medium text-stone-900">
+                    Song {song.id.slice(0, 8)}
+                  </div>
+                  <div className="mt-1 text-sm text-stone-500">
+                    Created {formatCreatedAt(song.created_at)}
+                  </div>
+                </Link>
               </li>
             ))}
           </ul>
