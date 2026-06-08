@@ -4,7 +4,7 @@ import { supabase } from "~/lib/supabase";
 import type { Section } from "~/types";
 import addEmptyMeasureGroup from "~/utils/addEmptyMeasureGroup";
 import addEmptySection from "~/utils/addEmptySection";
-import addNewChord from "~/utils/addNewChord";
+import addChordToLastMeasure from "~/utils/addChordToLastMeasure";
 import deleteLastChord from "~/utils/deleteLastChord";
 import { normalizeSongTitle } from "~/utils/songTitle";
 import updateSectionName from "~/utils/updateSectionName";
@@ -30,13 +30,17 @@ function useSongState() {
 
   // Add new chord when a, b, c, d, e, f, or g is pressed
   useHotkeys(chordNames, (e) =>
-    setSections((prev) => addNewChord(prev, e.key.toUpperCase(), "major")),
+    setSections((prev) =>
+      addChordToLastMeasure(prev, e.key.toUpperCase(), "major"),
+    ),
   );
 
   useHotkeys(
     chordNames.map((chord) => "shift+" + chord),
     (e) =>
-      setSections((prev) => addNewChord(prev, e.key.toUpperCase(), "minor")),
+      setSections((prev) =>
+        addChordToLastMeasure(prev, e.key.toUpperCase(), "minor"),
+      ),
   );
 
   async function saveSong() {

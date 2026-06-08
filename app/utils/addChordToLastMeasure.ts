@@ -7,7 +7,7 @@ import {
   createSection,
 } from "~/utils/factories";
 
-export default function addNewChord(
+export default function addChordToLastMeasure(
   sections: Section[],
   chord: string,
   quality: ChordQuality,
