@@ -1,9 +1,14 @@
+import { produce } from "immer";
 import { useCallback, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
+type Measure = string[];
+
+type MeasureGroup = Measure[];
+
 interface Section {
   name: string;
-  chords: string[];
+  measureGroups: MeasureGroup[];
 }
 
 function useKeyboardInput() {
@@ -11,28 +16,47 @@ function useKeyboardInput() {
 
   const handleNewSection = useCallback(
     (name: string, chords: string[]) =>
-      setSections((prev) => prev.concat({ name, chords })),
+      setSections(
+        produce((prev) => prev.concat({ name, measureGroups: [[chords]] })),
+      ),
     [setSections],
   );
 
-  const handleAddChordToLastSection = useCallback(
+  const handleAddMeasure = useCallback(
     (chord: string) =>
-      setSections((prev) =>
-        prev.map((s, i) =>
-          i === prev.length - 1 ? { ...s, chords: [...s.chords, chord] } : s,
-        ),
+      setSections(
+        produce((prev) => {
+          const lastSection = prev[prev.length - 1];
+
+          if (!lastSection) {
+            return prev;
+          }
+
+          const { measureGroups } = lastSection;
+
+          const lastMeasureGroup = measureGroups[measureGroups.length - 1];
+
+          if (!lastMeasureGroup) {
+            return prev;
+          }
+
+          lastMeasureGroup.push([chord]);
+
+          return prev;
+        }),
       ),
     [setSections],
   );
 
   useHotkeys(["a", "b", "c", "d", "e", "f", "g"], (e) => {
     const lastSection = sections[sections.length - 1];
+
     const chord = e.key.toUpperCase();
 
     if (!lastSection) {
       handleNewSection("Section", [chord]);
     } else {
-      handleAddChordToLastSection(chord);
+      handleAddMeasure(chord);
     }
   });
 
