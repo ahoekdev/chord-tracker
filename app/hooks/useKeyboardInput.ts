@@ -1,68 +1,25 @@
-import { produce } from "immer";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
-
-type Measure = string[];
-
-type MeasureGroup = Measure[];
-
-interface Section {
-  name: string;
-  measureGroups: MeasureGroup[];
-}
+import type { Section } from "~/types";
+import addEmptySection from "~/utils/addEmptySection";
+import addNewChord from "~/utils/addNewChord";
+import deleteLastChord from "~/utils/deleteLastChord";
 
 function useKeyboardInput() {
   const [sections, setSections] = useState<Section[]>([]);
 
-  const handleNewSection = useCallback(
-    (name: string, chords: string[]) =>
-      setSections(
-        produce((prev) => prev.concat({ name, measureGroups: [[chords]] })),
-      ),
-    [setSections],
+  // Add empty section when space is pressed
+  useHotkeys("space", () => setSections(addEmptySection));
+
+  // Delete last chord when backspace is pressed
+  useHotkeys("backspace", () => setSections(deleteLastChord));
+
+  // Add new chord when a, b, c, d, e, f, or g is pressed
+  useHotkeys(["a", "b", "c", "d", "e", "f", "g"], (e) =>
+    setSections((prev) => addNewChord(prev, e.key.toUpperCase())),
   );
 
-  const handleAddMeasure = useCallback(
-    (chord: string) =>
-      setSections(
-        produce((prev) => {
-          const lastSection = prev[prev.length - 1];
-
-          if (!lastSection) {
-            return prev;
-          }
-
-          const { measureGroups } = lastSection;
-
-          const lastMeasureGroup = measureGroups[measureGroups.length - 1];
-
-          if (!lastMeasureGroup) {
-            return prev;
-          }
-
-          lastMeasureGroup.push([chord]);
-
-          return prev;
-        }),
-      ),
-    [setSections],
-  );
-
-  useHotkeys(["a", "b", "c", "d", "e", "f", "g"], (e) => {
-    const lastSection = sections[sections.length - 1];
-
-    const chord = e.key.toUpperCase();
-
-    if (!lastSection) {
-      handleNewSection("Section", [chord]);
-    } else {
-      handleAddMeasure(chord);
-    }
-  });
-
-  useHotkeys("space", () => handleNewSection("Section", []));
-
-  return { sections };
+  return sections;
 }
 
 export default useKeyboardInput;
