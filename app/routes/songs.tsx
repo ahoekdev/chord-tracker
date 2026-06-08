@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { supabase } from "~/lib/supabase";
+import { displaySongTitle } from "~/utils/songTitle";
 
 type SongListItem = {
   id: string;
+  title: string | null;
   created_at: string | null;
 };
 
@@ -45,7 +47,7 @@ export default function Songs() {
     async function loadSongs() {
       const { data, error } = await supabase
         .from("songs")
-        .select("id, created_at")
+        .select("id, title, created_at")
         .order("created_at", { ascending: false });
 
       if (!isMounted) {
@@ -122,7 +124,7 @@ export default function Songs() {
                   to={`/songs/${song.id}`}
                 >
                   <div className="text-base font-medium text-stone-900">
-                    Song {song.id.slice(0, 8)}
+                    {displaySongTitle(song.title)}
                   </div>
                   <div className="mt-1 text-sm text-stone-500">
                     Created {formatCreatedAt(song.created_at)}

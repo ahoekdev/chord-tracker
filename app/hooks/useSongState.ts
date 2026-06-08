@@ -6,11 +6,13 @@ import addEmptyMeasureGroup from "~/utils/addEmptyMeasureGroup";
 import addEmptySection from "~/utils/addEmptySection";
 import addNewChord from "~/utils/addNewChord";
 import deleteLastChord from "~/utils/deleteLastChord";
+import { normalizeSongTitle } from "~/utils/songTitle";
 import updateSectionName from "~/utils/updateSectionName";
 
 type SaveState = "idle" | "saving" | "saved" | "error";
 
 function useSongState() {
+  const [title, setTitle] = useState("");
   const [sections, setSections] = useState<Section[]>([]);
   const [songId, setSongId] = useState<string | null>(null);
   const [saveState, setSaveState] = useState<SaveState>("idle");
@@ -33,6 +35,7 @@ function useSongState() {
     setSaveState("saving");
 
     const payload = {
+      title: normalizeSongTitle(title),
       sections,
       updated_at: new Date().toISOString(),
     };
@@ -68,6 +71,8 @@ function useSongState() {
   }
 
   return {
+    title,
+    setTitle,
     sections,
     saveSong,
     saveState,

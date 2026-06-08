@@ -3,9 +3,11 @@ import { Link, useParams } from "react-router";
 import { Section } from "~/components/Section/Section";
 import { supabase } from "~/lib/supabase";
 import type { Section as SongSection } from "~/types";
+import { displaySongTitle } from "~/utils/songTitle";
 
 type SongRecord = {
   id: string;
+  title: string | null;
   created_at: string | null;
   sections: SongSection[];
 };
@@ -54,7 +56,7 @@ export default function SongView() {
 
       const { data, error } = await supabase
         .from("songs")
-        .select("id, created_at, sections")
+        .select("id, title, created_at, sections")
         .eq("id", songId)
         .single();
 
@@ -87,7 +89,7 @@ export default function SongView() {
               Chord Tracker
             </p>
             <h1 className="mt-2 text-3xl font-semibold text-stone-900">
-              Song {songId?.slice(0, 8)}
+              {displaySongTitle(song?.title)}
             </h1>
             {song && (
               <p className="mt-2 text-sm text-stone-500">

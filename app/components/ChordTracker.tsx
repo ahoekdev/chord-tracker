@@ -2,7 +2,8 @@ import useSongState from "~/hooks/useSongState";
 import { Section } from "./Section/Section";
 
 function ChordTracker() {
-  const { sections, renameSection, saveSong, saveState } = useSongState();
+  const { title, setTitle, sections, renameSection, saveSong, saveState } =
+    useSongState();
 
   return (
     <div className="flex flex-col gap-6">
@@ -34,6 +35,21 @@ function ChordTracker() {
           {saveState === "saving" ? "Saving..." : "Save"}
         </button>
         </div>
+      </div>
+      <div className="flex flex-col gap-2">
+        <label
+          className="text-sm font-medium uppercase tracking-[0.16em] text-stone-500"
+          htmlFor="song-title"
+        >
+          Song title
+        </label>
+        <input
+          className="w-full rounded-xl border border-stone-300 bg-white px-4 py-3 text-base font-medium text-stone-800 outline-none transition placeholder:text-stone-400 focus:border-stone-500"
+          id="song-title"
+          onChange={(event) => setTitle(event.target.value)}
+          placeholder="Untitled song"
+          value={title}
+        />
       </div>
       <div className="flex flex-col gap-5">
         {sections.map(({ id, name, measureGroups }) => (
