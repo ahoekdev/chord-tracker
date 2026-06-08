@@ -10,21 +10,22 @@ export default function deleteLastChord(sections: Section[]) {
         const lastMeasureGroup =
           lastSection.measureGroups[lastSection.measureGroups.length - 1];
 
-        while (lastMeasureGroup.length > 0) {
-          const lastMeasure = lastMeasureGroup[lastMeasureGroup.length - 1];
+        while (lastMeasureGroup.measures.length > 0) {
+          const lastMeasure =
+            lastMeasureGroup.measures[lastMeasureGroup.measures.length - 1];
 
-          if (lastMeasure.length === 0) {
-            lastMeasureGroup.pop();
+          if (lastMeasure.chords.length === 0) {
+            lastMeasureGroup.measures.pop();
             continue;
           }
 
-          lastMeasure.pop();
+          lastMeasure.chords.pop();
 
-          if (lastMeasure.length === 0) {
-            lastMeasureGroup.pop();
+          if (lastMeasure.chords.length === 0) {
+            lastMeasureGroup.measures.pop();
           }
 
-          if (lastMeasureGroup.length === 0) {
+          if (lastMeasureGroup.measures.length === 0) {
             lastSection.measureGroups.pop();
           }
 
