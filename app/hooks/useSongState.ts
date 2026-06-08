@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
+import { supabase } from "~/lib/supabase";
 import type { Section } from "~/types";
 import addEmptyMeasureGroup from "~/utils/addEmptyMeasureGroup";
 import addEmptySection from "~/utils/addEmptySection";
@@ -7,8 +8,12 @@ import addNewChord from "~/utils/addNewChord";
 import deleteLastChord from "~/utils/deleteLastChord";
 import updateSectionName from "~/utils/updateSectionName";
 
+type SaveState = "idle" | "saving" | "saved" | "error";
+
 function useSongState() {
   const [sections, setSections] = useState<Section[]>([]);
+  const [songId, setSongId] = useState<string | null>(null);
+  const [saveState, setSaveState] = useState<SaveState>("idle");
 
   // Add empty section when space is pressed
   useHotkeys("shift+enter", () => setSections(addEmptySection));
@@ -24,8 +29,49 @@ function useSongState() {
     setSections((prev) => addNewChord(prev, e.key.toUpperCase())),
   );
 
+  async function saveSong() {
+    setSaveState("saving");
+
+    const payload = {
+      sections,
+      updated_at: new Date().toISOString(),
+    };
+
+    if (!songId) {
+      const { data, error } = await supabase
+        .from("songs")
+        .insert({
+          ...payload,
+          created_at: new Date().toISOString(),
+        })
+        .select("id")
+        .single();
+
+      if (error || !data) {
+        setSaveState("error");
+        return;
+      }
+
+      setSongId(data.id);
+      setSaveState("saved");
+      return;
+    }
+
+    const { error } = await supabase.from("songs").update(payload).eq("id", songId);
+
+    if (error) {
+      setSaveState("error");
+      return;
+    }
+
+    setSaveState("saved");
+  }
+
   return {
     sections,
+    saveSong,
+    saveState,
+    songId,
     renameSection: (sectionId: string, name: string) =>
       setSections((prev) => updateSectionName(prev, sectionId, name)),
   };
